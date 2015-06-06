@@ -1,0 +1,78 @@
+@Tables and Formats used by DOS & BIOS
+:backup headers
+^DOS BACKUP Control Information
+
+%	BACKUPID.@@@ Format
+
+%     Offset Size		Description
+	00   byte   Disk sequence flag:
+			00  indicates disk is not the last backup diskette
+			FF  indicates disk is the last backup diskette
+	01   word   Floppy disk sequence number (Intel format)
+	03   word   Backup year, four digits (Intel format)
+	05   byte   Day of month (1-31)
+	06   byte   Month of year (1-12)
+	07   dword  System time if /T was specified (see ~FILE ATTRIBUTES~)
+	0B 117bytes Unused
+
+
+%	Backup File Header
+
+%     Offset Size		Description
+	00   byte   Disk sequence flag:
+			00  indicates disk is not the last backup diskette
+			FF  indicates disk is the last backup diskette
+	01   byte   Floppy disk sequence number
+	02  3bytes  Unused
+	05 64bytes  Full pathname (without drive designator)
+	45 14bytes  Unused
+	53   byte   Length of file path name at offset 05 plus 1
+	54 44Bytes  Unused
+:BIOS Parameter Block:BPB
+^BPB - BIOS Parameter Block
+
+%     Offset Size	    Description
+
+	00   word	sector size in bytes
+	02   byte	sectors per cluster (allocation unit size)
+	03   word	number of reserved sectors
+	05   byte	number of FATs on disk
+	06   word	number of root directory entries (directory size)
+	08   word	number of total sectors; if partition > 32Mb then set
+			to zero and dword at 15h contains the actual count
+	0A   byte	media descriptor byte  (see ~MEDIA DESCRIPTOR~)
+	0B   word	sectors per ~FAT~
+
+%	Additional/different fields for DOS 3.0+
+	0D   word	sectors per track
+	0F   word	number of heads
+	11   word	number of hidden sectors
+	15 11bytes	reserved
+
+%	Additional/different fields for DOS 4.0+
+	15   dword	number of total sectors if offset 8 is zero
+	19  6bytes	reserved
+	1F   word	number of cylinders
+	21   byte	device type
+	22   word	device attributes
+
+	- located in the boot sector at offset 0Bh
+
+	  were added after offset 0
+	- to find a BCB, locate the first block in the MCB chain belonging
+	  to COMMAND.COM (the second allocated block always belongs to
+	  COMMAND.COM).  Then scan the ~MCB~ chain for a 64 byte block with
+	  the same owner ID as COMMAND.COM).  This will be the BCB.
+:BIOS Data Area:BDA:BIOS memory:memory map
+^BDA - BIOS Data Area - PC Memory Map
+
+%	Address Size	   Description
+
+	00:00 256dwords Interrupt vector table
+	30:00 256bytes	Stack area used during post and bootstrap
+	40:00	word	COM1 port address
+	40:02	word	COM2 port address
+	40:04	word	COM3 port address
+	40:06	word	COM4 port address
+	40:08	word	LPT1 port address
+	40:0A	word	LPT2 port address
